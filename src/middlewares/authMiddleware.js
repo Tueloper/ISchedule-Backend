@@ -10,9 +10,9 @@ const {
 const {
   validateSignup, validateLogin
 } = AuthValidation;
-const {
-  validateEmail, validateVendorId
-} = GeneralValidation;
+// const {
+//   validateEmail, validateVendorId
+// } = GeneralValidation;
 const {
   findByKey
 } = GeneralService;
@@ -34,7 +34,7 @@ const AuthMiddleware = {
       const { email } = req.body;
       validateSignup(req.body);
       const user = await findByKey(User, { email });
-      if (user) return errorResponse(res, { code: 409, message: 'Sorry, this email address is in use by another user, kindly review the address' });
+      if (user) return errorResponse(res, { code: 409, message: 'Sorry, this email address is in use by another user, kindly review email address' });
       next();
     } catch (error) {
       errorResponse(res, { code: 400, message: error });

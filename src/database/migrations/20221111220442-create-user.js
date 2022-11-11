@@ -6,13 +6,30 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    fullName: {
+    name: {
       type: Sequelize.STRING,
       allowNull: true
     },
-    role: {
+    username: {
       type: Sequelize.STRING,
       allowNull: true
+    },
+    imageUrl: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    gender: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    dob: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    type: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'student'
     },
     password: {
       type: Sequelize.STRING,
@@ -22,20 +39,9 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true,
       isEmail: true,
-      unique: true
     },
-    verified: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    firstTimer: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    },
-    supervisorId: {
-      type: Sequelize.INTEGER,
+    phoneNumber: {
+      type: Sequelize.STRING,
       allowNull: true
     },
     createdAt: {

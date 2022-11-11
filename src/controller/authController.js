@@ -42,52 +42,29 @@ const AuthController = {
    */
   async signup(req, res) {
     try {
-      let body, user, supervisor;
-      if (req.body.ADMIN_KEY) {
-        if (req.body.ADMIN_KEY !== ADMIN_KEY) return errorResponse(res, { code: 409, message: 'Admin key does not match.' });
-        if (req.body.CIC_ADMIN) {
-          body = {
-            fullName: req.body.fullName,
-            email: req.body.email,
-            password: hashPassword(req.body.password),
-            role: 'superadmin',
-            verified: true
-          };
-        } else {
-          supervisor = await findByKey(Supervisor, { email: req.body.email });
-          if (!supervisor) return errorResponse(res, { code: 404, message: 'This Supervisor does not exist in the database.' });
-          body = {
-            fullName: req.body.fullName,
-            email: req.body.email,
-            password: hashPassword(req.body.password),
-            role: 'admin',
-            verified: true,
-            supervisorId: supervisor.id
-          };
-        }
-      } else {
-        body = {
-          fullName: req.body.fullName,
-          email: req.body.email,
-          password: hashPassword(req.body.password),
-          role: 'staff',
-          verified: true
-        };
-      }
+      const body = {
+        name: req.body.name,
+        username: req.body.username,
+        imageUrl: req.body.imageUrl,
+        email: req.body.email,
+        password: hashPassword(req.body.password),
+        type: req.body.type,
+        dob: req.body.dob,
+        phoneNumber: req.body.phoneNumber
+      };
 
-      user = await addEntity(User, { ...body });
+      const user = await addEntity(User, { ...body });
       user.token = createToken({
         email: user.email,
         id: user.id,
-        role: user.role,
-        verified: user.verified,
-        supervisorId: user.supervisorId,
-        name: user.fullName,
+        type: user.type,
+        username: user.username,
+        phoneNumber: user.phoneNumber,
       });
       res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
-      return successResponse(res, { user, supervisor }, 201);
+      return successResponse(res, { ...user }, 201);
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       errorResponse(res, {});
     }
   },

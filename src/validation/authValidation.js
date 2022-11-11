@@ -1,5 +1,14 @@
-/* eslint-disable no-useless-escape */
 import joi from '@hapi/joi';
+import passwordComplexity from 'joi-password-complexity';
+
+// password complexity object
+const complexityOptions = {
+  min: 4,
+  max: 250,
+  lowerCase: 1,
+  numeric: 1,
+  requirementCount: 3,
+};
 
 const AuthValidation = {
   /**
@@ -9,9 +18,18 @@ const AuthValidation = {
    * @returns {object | boolean} - returns a boolean or an error object
    * @memberof AuthValidation
    */
-  validatePhoneNumber(payload) {
+  validateSignup(payload) {
     const schema = {
-      phoneNumber: joi.string().min(11).required().label('Please input a valid phone number'),
+      name: joi.string().min(3).max(30).label('Please enter a valid name \n the field must not be empty and it must be more than 2 letters'),
+      email: joi.string().email().required().label('Please enter a valid email address'),
+      password: joi.string().required()
+        .label('Password is required or password is not valid'),
+      username: joi.string().label('username must be a string'),
+      imageUrl: joi.string().label('image url should be in url format'),
+      gender: joi.strict().label('Gender is only male or female'),
+      dob: joi.string().label('please add a valid date of birth'),
+      type: joi.string().valid('student', 'lecturer').label('User must be a student or a lecturer'),
+      phoneNumber: joi.string().label('phone number must be valid')
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
@@ -19,151 +37,41 @@ const AuthValidation = {
   },
 
   /**
-   * validate user token parameters during signup
+   * validate user parameters during login
    * @function
    * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
+   * @returns {boolean | object} - returns a boolean or an error object
    * @memberof AuthValidation
    */
-  validateToken(payload) {
-    const schema = {
-      token: joi.string().min(4).required()
-        .label('Please input a valid token number'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate email
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateEmail(payload) {
+  validateLogin(payload) {
     const schema = {
       email: joi.string().email().required()
-        .label('Please enter a valid email address'),
+        .label('incorrect password or email'),
+      password: new passwordComplexity(complexityOptions).required()
+        .label('incorrect password or email')
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
     return true;
   },
-
   /**
-   * validate name
+   * validate username credentials
    * @function
    * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateName(payload) {
-    const schema = {
-      name: joi.string().required().label('Please add a valid name')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate nick name
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
+   * @returns {boolean | object} - returns a boolean or an error object
    * @memberof AuthValidation
    */
   validateUsername(payload) {
     const schema = {
-      username: joi.string().required().label('Please add a valid username')
+      userName: joi.string().min(3).max(15).regex(/^[a-zA-Z0-9_]{3,30}$/)
+        .required()
+        .label('Please input a valid userName \n It must only contain alphabets and/underscore ("-")'),
+      change: joi.bool(),
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
     return true;
   },
-
-  /**
-   * validate nick name
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateDOB(payload) {
-    const schema = {
-      dob: joi.date().required().label('Please add a valid date of birth')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate nick name
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateGender(payload) {
-    const schema = {
-      gender: joi.string().required().valid('male', 'female', 'MALE', 'FEMALE', 'Male', 'Female').label('Please add a valid gender')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate ROLE
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateRole(payload) {
-    const schema = {
-      role: joi.string().required().valid('admin', 'user', 'superadmin', 'business', 'eventmanager', 'cinemamanager', 'ticketManager').label('Please add a valid role')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate password
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validatePassword(payload) {
-    const schema = {
-      password: joi.string().min(7).required().label('Please add a valid name')
-        .label('Password is required. \n It should be more than 8 characters'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate referral code
-   * @function
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof AuthValidation
-   */
-  validateRefferalCode(payload) {
-    const schema = {
-      refferalCode: joi.string().min(8).label('Please add a valid name'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  }
 };
 
 export default AuthValidation;

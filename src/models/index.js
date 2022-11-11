@@ -9,27 +9,12 @@ const environ = env.NODE_ENV || 'development';
 const config = sequelizeConfig[environ];
 
 const db = {};
-// let sequelize;
 
 if (environ === 'test') config.logging = false;
-// if (environ === 'production') {
-// const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASSWORD, {
-//   host: env.DB_HOST,
-//   port: env.DB_PORT,
-//   dialect: 'mysql',
-//   ssl: true,
-//   dialectOptions: {
-//     ssl: {
-//       require: true
-//     }
-//   }
-// });
-// } else {
 const sequelize = new Sequelize(
   config.url,
   config
 );
-// }
 
 fs.readdirSync(__dirname)
   .filter(
