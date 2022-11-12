@@ -6,17 +6,14 @@ import { AuthController } from '../controller';
 const router = Router();
 const {
   verifySignup,
+  verifyLogin,
 } = AuthMiddleware;
 const {
-  // registerPhoneNumber,
-  // verifyToken,
-  // resendToken,
   signup,
+  login,
 } = AuthController;
 
-// router.post('/verifyNumber', verifyUser, registerPhoneNumber);
-// router.post('/verifyToken', validateTokenValue, verifyToken);
-// router.post('/resendToken', verifyEmail, resendToken);
 router.post('/signup', verifySignup, signup);
+router.post('/login', verifyLogin, login);
 
 export default router;

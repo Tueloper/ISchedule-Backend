@@ -47,7 +47,7 @@ const AuthValidation = {
     const schema = {
       email: joi.string().email().required()
         .label('incorrect password or email'),
-      password: new passwordComplexity(complexityOptions).required()
+      password: joi.string().required()
         .label('incorrect password or email')
     };
     const { error } = joi.validate({ ...payload }, schema);

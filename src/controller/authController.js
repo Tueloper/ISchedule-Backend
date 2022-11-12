@@ -10,8 +10,8 @@ const {
   errorResponse,
   createToken,
   hashPassword,
-  // comparePassword,
-  // verifyToken,
+  comparePassword,
+  verifyToken,
 } = Toolbox;
 // const {
 //   sendPasswordResetEmail,
@@ -64,99 +64,39 @@ const AuthController = {
       res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       return successResponse(res, { ...user }, 201);
     } catch (error) {
-      console.error(error);
       errorResponse(res, {});
     }
   },
 
-  // /**
-  //  * user login
-  //  * @async
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {JSON} - a JSON response
-  //  * @memberof AuthController
-  //  */
-  // async login(req, res) {
-  //   try {
-  //     const { password } = req.body;
-  //     const user = req.userData;
-  //     if (!comparePassword(password, user.password)) return errorResponse(res, { code: 401, message: 'incorrect password or email' });
-  //     user.token = createToken({
-  //       email: user.email,
-  //       id: user.id,
-  //       role: user.role,
-  //       verified: user.verified,
-  //       supervisorId: user.supervisorId,
-  //       name: user.fullName,
-  //     });
-  //     res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
-  //     return successResponse(res, {
-  //       message: 'Login Successful',
-  //       token: user.token,
-  //       firstTimer: user.firstTimer
-  //     });
-  //   } catch (error) {
-  //     errorResponse(res, {});
-  //   }
-  // },
-
-  //  /**
-  //  * verify user email
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {JSON} - a JSON response
-  //  * @memberof AuthController
-  //  */
-  // async verifyEmail(req, res) {
-  //   try {
-  //     const { token } = req.query;
-  //     const tokenData = verifyToken(token);
-  //     const { id } = tokenData;
-  //     await updateByKey(User, { verified: true }, { id });
-  //     const user =  await findByKey(User, { id });
-  //     const newToken = createToken({
-  //       email: user.email,
-  //       id: user.id,
-  //       role: user.role,
-  //       verified: user.verified
-  //     });
-  //     res.cookie('token', newToken, { maxAge: 70000000, httpOnly: true });
-  //     return res.redirect(`${CLIENT_URL}/staff?token=${newToken}`);
-  //   } catch (error) {
-  //     if (error.message === 'Invalid Token') {
-  //       return errorResponse(res, { code: 400, message: 'We could not verify your email, the token provided was invalid' });
-  //     }
-  //     if (error.message === 'Not Found') {
-  //       return errorResponse(res, { code: 404, message: 'Sorry, we do not recognise this user in our database' });
-  //     }
-  //     errorResponse(res, {});
-  //   }
-  // },
-
-  //  /**
-  //  * user gets a new email verification link
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {JSON} - a JSON response
-  //  * @memberof AuthController
-  //  */
-  // async resendEmailVerificationLink(req, res) {
-  //   try {
-  //     const { email } = req.body;
-  //     const user = await findByKey(User, { email });
-  //     if (!user) return errorResponse(res, { code: 404, message: `user with email ${email} does not exist` });
-  //     if (user.role !== "staff") return errorResponse(res, { code: 409, message: `This user is not a staff and does not need to be verified to access the platform` });
-  //     // TODO: uncomment for production
-  //     // const emailSent = await sendVerificationEmail(req, user);
-  //     // TODO: delete bottom line for production
-  //     const emailSent = true;
-  //     if (emailSent) return successResponse(res, { message: 'An Email Verification link has been resent to your email' });
-  //   } catch (error) {
-  //     errorResponse(res, {});
-  //   }
-  // },
-
+  /**
+   * user login
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} - a JSON response
+   * @memberof AuthController
+   */
+  async login(req, res) {
+    try {
+      const { password } = req.body;
+      const user = req.userData;
+      if (!comparePassword(password, user.password)) return errorResponse(res, { code: 401, message: 'incorrect password or email' });
+      user.token = createToken({
+        email: user.email,
+        id: user.id,
+        type: user.type,
+        username: user.username,
+        phoneNumber: user.phoneNumber,
+      });
+      res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
+      return successResponse(res, {
+        message: 'Login Successful',
+        token: user.token
+      });
+    } catch (error) {
+      errorResponse(res, {});
+    }
+  },
 
   // /**
   //  * get user profile
