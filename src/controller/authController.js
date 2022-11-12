@@ -3,7 +3,6 @@
 import { GeneralService } from '../services';
 import { Toolbox } from '../util';
 import database from '../models';
-import { env } from '../config';
 
 const {
   successResponse,
@@ -13,23 +12,14 @@ const {
   comparePassword,
   verifyToken,
 } = Toolbox;
-// const {
-//   sendPasswordResetEmail,
-//   // sendVerificationEmail
-// } = Mailer;
 const {
   addEntity,
-  // updateByKey,
   findByKey,
   // deleteByKey
 } = GeneralService;
 const {
   User,
-  Supervisor
 } = database;
-const {
-  ADMIN_KEY
-} = env;
 
 const AuthController = {
   /**
@@ -98,158 +88,22 @@ const AuthController = {
     }
   },
 
-  // /**
-  //  * get user profile
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {JSON} - A jsom response with user details
-  //  * @memberof UserController
-  //  */
-  // async getProfile(req, res) {
-  //   try {
-  //     const { id } = req.tokenData;
-  //     const user = await findByKey(User, { id });
-  //     successResponse(res, { user });
-  //   } catch (error) {
-  //     errorResponse(res, {});
-  //   }
-  // },
-
-
-  // // /**
-  // //  * update user profile
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - A jsom response with user details
-  // //  * @memberof UserController
-  // //  */
-  // // async updateSupervisor(req, res) {
-  // //   try {
-  // //     const { id, supervisorId } = req.tokenData;
-  // //     // return console.log(supervisorId);
-  // //     let supervisor = await updateByKey(Supervisor, { name: req.body.name }, { id: supervisorId });
-  // //     supervisor = await findByKey(Supervisor, { id: supervisorId });
-  // //     successResponse(res, { message:'Supervisor updated successfully', supervisor });
-  // //   } catch (error) {
-  // //     // console.error(error);
-  // //     errorResponse(res, {});
-  // //   }
-  // // },
-
-  // // /**
-  // //  * update user profile
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - A jsom response with user details
-  // //  * @memberof UserController
-  // //  */
-  // // async updateUserDetails(req, res) {
-  // //   try {
-  // //     // const { id } = req.tokenData;
-  // //     const user = await findByKey(User, { email: req.body.email });
-  // //     const id = user.id;
-  // //     // return console.log(supervisorId);
-  // //     let supervisor = await updateByKey(User, { email: req.body.newEmail }, { id });
-  // //     supervisor = await findByKey(User, { id });
-  // //     successResponse(res, { message:'User updated successfully', supervisor });
-  // //   } catch (error) {
-  // //     // console.error(error);
-  // //     errorResponse(res, {});
-  // //   }
-  // // },
-
-  // //  /**
-  // //  * reset user password
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - a JSON response
-  // //  * @memberof AuthController
-  // //  */
-  // // async resetPassword(req, res) {
-  // //   try {
-  // //     const { oldPassword, newPassword } = req.body;
-  // //     const { id } = req.tokenData;
-  // //     let user = await findByKey(User, { id });
-  // //     if (!user) return errorResponse(res, { code: 404, message: 'Sorry, user in token does not exist' });
-  // //     if (!comparePassword(oldPassword, user.password)) return errorResponse(res, { code: 401, message: 'Old password is incorrect' });
-  // //     const hashedPassword = hashPassword(newPassword);
-  // //     user = await updateByKey(User, { password: hashedPassword, firstTimer: false }, { id });
-  // //     successResponse(res, { message: 'Password has been changed successfully' });
-  // //   } catch (error) {
-  // //     errorResponse(res, {});
-  // //   }
-  // // },
-
-  // //  /**
-  // //  * user reset password email
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - a JSON response
-  // //  * @memberof AuthController
-  // //  */
-  // // async resetPasswordEmailLink(req, res) {
-  // //   try {
-  // //     const { email } = req.body;
-  // //     let user = await findByKey(User, { email });
-  // //     if (!user) return errorResponse(res, { code: 404, message: 'email does not match anything in our database' });
-  // //     // TODO: uncomment for production
-  // //     const emailSent = await sendPasswordResetEmail(req, user);
-  // //     // TODO: delete bottom line for production
-  // //     // const emailSent = true;
-  // //     if (emailSent) return successResponse(res, { message: 'A password reset link has been sent to your email' });
-  // //   } catch (error) {
-  // //     // console.error(error);
-  // //     errorResponse(res, {});
-  // //   }
-  // // },
-
-  // //   /**
-  // //  * verify reset password link
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - a JSON response
-  // //  * @memberof AuthController
-  // //  */
-  // // async verifyResetPasswordLink(req, res) {
-  // //   try {
-  // //     const { token } = req.query;
-  // //     const tokenData = (token);
-  // //     if (tokenData) {
-  // //       res.cookie('token', token, { maxAge: 70000000, httpOnly: true });
-  // //       // const url = `${req.protocol}s://${req.get('host')}/v1.0/api/auth/set-password`;
-  // //       // successResponse(res, { message: `success, redirect to api route ${url} with password objects` });
-  // //       return res.redirect(`${CLIENT_URL}/set-password?token=${token}`);
-  // //     }
-  // //   } catch (error) {
-  // //     if (error.message === 'Invalid Token') {
-  // //       return errorResponse(res, { code: 400, message: 'The token provided was invalid' });
-  // //     }
-  // //     const status = error.status || 500;
-  // //     errorResponse(res, { code: status, message: `could not verify, ${error.message}` });
-  // //   }
-  // // },
-
-  // // /**
-  // //  * one time password set
-  // //  * @param {object} req
-  // //  * @param {object} res
-  // //  * @returns {JSON} - a JSON response
-  // //  * @memberof AuthController
-  // //  */
-  // // async setPassword(req, res) {
-  // //   try {
-  // //     const { newPassword } = req.body;
-  // //     const { id } = req.tokenData;
-  // //     let user = await findByKey(User, { id });
-  // //     if (!user) return errorResponse(res, { code: 404, message: 'Sorry, user in token does not exist' });
-  // //     const hashedPassword = hashPassword(newPassword);
-  // //     user = await updateByKey(User, { password: hashedPassword }, { id });
-  // //     successResponse(res, { message: 'Password has been set successfully' });
-  // //   } catch (error) {
-  // //     errorResponse(res, {});
-  // //   }
-  // // },
-
+  /**
+   * get user profile
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} - A jsom response with user details
+   * @memberof UserController
+   */
+  async getProfile(req, res) {
+    try {
+      const { id } = req.tokenData;
+      const user = await findByKey(User, { id });
+      successResponse(res, { user });
+    } catch (error) {
+      errorResponse(res, {});
+    }
+  },
 
   // // /**
   // //  * logs user out
@@ -267,26 +121,6 @@ const AuthController = {
   // //     errorResponse(res, {});
   // //   }
   // // },
-
-  // /**
-  //  * deactivate a user by an admin
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {JSON} - a JSON response
-  //  * @memberof AuthController
-  //  */
-  // async deactivateUsers(req, res) {
-  //   try {
-  //     const { id, email, vendorId } = req.query;
-  //     let user;
-  //     if (id) user = await deleteByKey(User, { id });
-  //     if (email) user = await deleteByKey(User, { email });
-  //     if (vendorId) user = await deleteByKey(User, { vendorId });
-  //     return successResponse(res, { message: 'User Deleted Successfully', user });
-  //   } catch (error) {
-  //     errorResponse(res, {});
-  //   }
-  // },
 };
 
 export default AuthController;

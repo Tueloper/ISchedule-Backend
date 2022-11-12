@@ -4,7 +4,7 @@ import { GeneralService } from '../services';
 import database from '../models';
 
 const {
-  errorResponse, checkToken, verifyToken
+  errorResponse, checkToken, verifyToken,
 } = Toolbox;
 const {
   validateSignup, validateLogin
@@ -80,6 +80,26 @@ const AuthMiddleware = {
     }
   },
 
+  /**
+   * verify user role
+   * @param {array} permissions - array with role id's permitted on route
+   * @returns {function} - returns an async functon
+   * @memberof AuthMiddleware
+   */
+  verifyRoles(permissions) {
+    return async function bar(req, res, next) {
+      try {
+        const { id } = req.tokenData;
+        const user = await findByKey(User, { id });
+        if (!user) return errorResponse(res, { code: 404, message: 'user in token does not exist' });
+        const permitted = permissions.includes(user.type);
+        if (!permitted) return errorResponse(res, { code: 403, message: 'Halt! You\'re not authorised' });
+        next();
+      } catch (error) {
+        errorResponse(res, {});
+      }
+    };
+  },
 };
 
 export default AuthMiddleware;
