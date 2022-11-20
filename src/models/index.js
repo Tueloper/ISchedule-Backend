@@ -10,6 +10,10 @@ const config = sequelizeConfig[environ];
 
 const db = {};
 
+// this is the sequelize setup
+// sequelize is an object relational mapper that helps setup any relational database for use, 
+// with it you dont have to write raw queries as everything has be handled by sequelize
+
 if (environ === 'test') config.logging = false;
 const sequelize = new Sequelize(
   config.url,

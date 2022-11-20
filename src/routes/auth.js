@@ -16,6 +16,7 @@ const {
   logoutUser,
 } = AuthController;
 
+// define apis
 router.post('/signup', verifySignup, signup);
 router.post('/login', verifyLogin, login);
 router.get('/profile', authenticate, getProfile);

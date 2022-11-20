@@ -1,5 +1,6 @@
 import env from './env';
 
+// this is database url configuration
 module.exports = {
   production: {
     url: env.PRO_URL,

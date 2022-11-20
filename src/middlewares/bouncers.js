@@ -9,6 +9,7 @@ const {
   student
 } = Permissions;
 
+// api bouncers to allow routes access for both student/lecturer
 const Bouncers = {
   lecturerBouncers: [authenticate, verifyRoles(lecturer)],
   studentBouncers: [authenticate, verifyRoles(student)]

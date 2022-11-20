@@ -12,6 +12,7 @@ const GeneralService = {
    */
   async addEntity(model, data) {
     try {
+      // sequelize method for adding values to the database entities
       const { dataValues: value } = await model.create(data);
       return value;
     } catch (error) {
@@ -30,6 +31,7 @@ const GeneralService = {
    */
   async findByKey(model, keys) {
     try {
+      // sequelize method for getting a single value by a single/multiple key
       return model.findOne({ where: keys });
     } catch (error) {
       throw new Error(error);
@@ -49,6 +51,7 @@ const GeneralService = {
    */
   async findMultipleWithPaginationByKey(model, keys, limit, offset) {
     try {
+      // sequelize method for getting all values by a single/multiple key
       return model.findAll({
         where: keys,
         limit,
@@ -69,6 +72,7 @@ const GeneralService = {
    */
   async deleteByKey(model, keys) {
     try {
+      // sequelize method for deleting values by a single/multiple key
       const numberOfRowsDeleted = await model.destroy({ where: keys });
       if (!numberOfRowsDeleted) throw new ApiError(404, 'Not Found');
       return true;
@@ -88,6 +92,7 @@ const GeneralService = {
    */
   async updateByKey(model, updateData, keys) {
     try {
+      // sequelize method for updating values by a single/multiple key
       const [rowaffected, [entity]] = await model.update(
         updateData, { returning: true, where: keys }
       );
@@ -107,6 +112,7 @@ const GeneralService = {
    */
   async allEntities(model) {
     try {
+      // get all values in the table
       const entities = await model.findAll({ where: {} });
       return entities;
     } catch (error) {
@@ -125,6 +131,7 @@ const GeneralService = {
    */
   async findMultipleByKey(model, keys) {
     try {
+      // get all values by single/multiple keys
       return model.findAll({
         where: keys,
         order: [
@@ -146,6 +153,7 @@ const GeneralService = {
    */
   async rowCountByKey(model, keys) {
     try {
+      // get all values by single/multiple keys, get rows and also count values
       const entities = await model.findAndCountAll({ returning: true, where: keys });
       if (!entities) throw new ApiError(404, 'Not Found');
       return entities;
