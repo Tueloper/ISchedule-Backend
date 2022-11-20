@@ -32,6 +32,7 @@ const AuthController = {
    */
   async signup(req, res) {
     try {
+      // get the user information for signup
       const body = {
         name: req.body.name,
         username: req.body.username,
@@ -43,7 +44,10 @@ const AuthController = {
         phoneNumber: req.body.phoneNumber
       };
 
+      // add the user using sequelize add command
       const user = await addEntity(User, { ...body });
+
+      // create user token from add user details to be sent back to the frontend
       user.token = createToken({
         email: user.email,
         id: user.id,
@@ -51,6 +55,8 @@ const AuthController = {
         username: user.username,
         phoneNumber: user.phoneNumber,
       });
+
+      // send token
       res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       return successResponse(res, { ...user }, 201);
     } catch (error) {
@@ -70,7 +76,10 @@ const AuthController = {
     try {
       const { password } = req.body;
       const user = req.userData;
+      // compare passwords, to be sure the password matches, if not send an error message
       if (!comparePassword(password, user.password)) return errorResponse(res, { code: 401, message: 'incorrect password or email' });
+
+      // if user passwoerd is correct, send user tokent to frontend
       user.token = createToken({
         email: user.email,
         id: user.id,
@@ -98,6 +107,8 @@ const AuthController = {
   async getProfile(req, res) {
     try {
       const { id } = req.tokenData;
+
+      // retrieve user details by user id
       const user = await findByKey(User, { id });
       successResponse(res, { user });
     } catch (error) {
@@ -115,6 +126,8 @@ const AuthController = {
   async logoutUser(req, res) {
     try {
       const token = '';
+
+      // send back empty user token, to log users out
       res.cookie('token', token, { maxAge: 0, httpOnly: true });
       return successResponse(res, { message: 'Logout Successful', token });
     } catch (error) {
