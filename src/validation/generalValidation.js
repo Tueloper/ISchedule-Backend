@@ -30,7 +30,7 @@ const GeneralValidation = {
       trailer: joi.string().uri().label('Please input a valid and trailer link'),
       state: joi.valid(states).label('Please input a valid state name'),
       storyLine: joi.string().label('Please input a valid movie story line'),
-      releaseDate: joi.date().label('Please input a valid date when the movie will be released'),
+      avialableDate: joi.date().label('Please input a valid date when the movie will be released'),
       showDate: joi.date().label('Please input a valid date when the movie will be released'),
       discount: joi.number().precision(2).label('Please input a valid discount, it\'s percentage should be presented in at most 2 decimal pllaces'),
       ticketPrice: joi.number().positive().label('Please input a valid movie ticket price'),
@@ -87,19 +87,17 @@ const GeneralValidation = {
   },
 
   /**
-   * validate category payload
+   * validate schedule payload
    * @param {object} payload - user object
    * @returns {object | boolean} - returns a boolean or an error object
    * @memberof GeneralValidation
    */
-  validateCategory(payload) {
+  validateSchedule(payload) {
     const schema = {
-      category: joi.array().items(
-        joi.object({
-          name: joi.string().required().label('Please name is required and must be valid (string)'),
-          description: joi.string().min(3).max(200).label('Please input a valid description'),
-        })
-      ).label('Please category payload must be an array of category objects'),
+      avialableDate: joi.date().label('Please input a valid date when the You will be available'),
+      startTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid start time'),
+      endTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid end time'),
+      booked: joi.bool().required().label('Please indicated whether you want to book or not'),
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
@@ -116,189 +114,6 @@ const GeneralValidation = {
     const schema = {
       id: joi.number().positive().required()
         .label('Please enter a positive number for id parameter'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate privacy payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validatePrivacy(payload) {
-    const schema = {
-      type: joi.string().required().label('Please input a valid privacy type'),
-      description: joi.string().label('Please input a valid privacy description'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate post payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validatePost(payload) {
-    const schema = {
-      title: joi.string().required().label('Please input a valid post title'),
-      isPublished: joi.bool().label('isPublished must be a boolean value'),
-      body: joi.string().required().label('Please input a valid post message'),
-      privacyId: joi.number().positive().label('Please input a valid privacy id'),
-      thumbnailId: joi.number().positive().required().label('Please add a valid thumbnail id'),
-      mediaId: joi.array().items(
-        joi.number().positive().required().label('Please add valid media id')
-      ).label('Media must be an array of picture id'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate cinema payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateCinema(payload) {
-    const schema = {
-      name: joi.string().required().label('Please input a valid cinema name'),
-      addresses: joi.array().items(
-        joi.object({
-          address: joi.string().label('Please input a valid address'),
-          city: joi.string().min(3).max(25).label('Please input a city name'),
-          seats: joi.number().positive().required().label('Cinema Address Seat capacity is required'),
-          state: joi.valid(states).required().label('Please state name must be capitalized'),
-          country: joi.valid(countries).required().label('Please country must be capitalized'),
-        })
-      ).required().label('Please input a valid cinema address'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate movie payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateMovie(payload) {
-    const schema = {
-      title: joi.string().required().label('Please input a valid post title'),
-      storyLine: joi.string().required().label('Please input a valid movie story line'),
-      releaseDate: joi.date().required().label('Please input a valid date when the movie will be released'),
-      showDate: joi.date().required().label('Please input a valid date when the movie will be released'),
-      discount: joi.number().precision(2).label('Please input a valid discount, it\'s percentage should be presented in at most 2 decimal pllaces'),
-      ticketPrice: joi.number().positive().required().label('Please input a valid movie ticket price'),
-      shareLink: joi.string().uri().label('Please input a valid and shareable link  '),
-      trailer: joi.string().uri().label('Please input a valid and trailer link  '),
-      duration: joi.string().required().label("Please duration should be for example '90 minutes' to be valid"),
-      numberOfTickets: joi.number().positive().required().label('Please input a valid number of tickets'),
-      privacyId: joi.number().integer().positive().label('Please input a valid privacy value'),
-      thumbnailId: joi.number().integer().positive().label('Please input a valid thumbnail value'),
-      cinemaIds: joi.array().items(joi.number().positive().required()).label('Please input a valid cinema address'),
-      mediaIds: joi.array().items(joi.number().positive().required()).label('Please input a valid media Ids'),
-      genreIds: joi.array().items(joi.number().positive().required()).label('Please input a valid genres'),
-      showTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid show time'),
-      post: joi.object({
-        title: joi.string().label('Please input a valid post title'),
-        body: joi.string().min(3).label('Please input a valid post description'),
-        privacyId: joi.number().integer().positive().label('Please input a valid privacy value')
-      }).label('Please add a post details for this movie')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate even payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateEvent(payload) {
-    const schema = {
-      name: joi.string().required().label('Please input a valid post title'),
-      description: joi.string().required().label('Please input a valid movie story line'),
-      address: joi.string().required().label('Please input a valid movie story line'),
-      startDate: joi.date().required().label('Please input a valid date when the movie will be released'),
-      endDate: joi.date().required().label('Please input a valid date when the movie will be released'),
-      startTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid show time'),
-      endTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid show time'),
-      discount: joi.number().precision(2).label('Please input a valid discount, it\'s percentage should be presented in at most 2 decimal pllaces'),
-      ticketPrice: joi.number().positive().required().label('Please input a valid movie ticket price'),
-      shareLink: joi.string().uri().label('Please input a valid and shareable link  '),
-      trailer: joi.string().uri().label('Please input a valid and trailer link  '),
-      duration: joi.string().required().label("Please duration should be for example '90 minutes' to be valid"),
-      numberOfTickets: joi.number().positive().required().label('Please a valid number of tickets'),
-      rating: joi.number().positive().label('Please input a valid event rating'),
-      thumbnailId: joi.number().integer().positive().label('Please input a valid thumbnail'),
-      privacyId: joi.number().integer().positive().label('Please input a valid privacy value'),
-      categoryIds: joi.array().items(joi.number().positive().required()).label('Please input a valid cinema address'),
-      mediaIds: joi.array().items(joi.number().positive().required()).label('Please input a valid media Ids'),
-      post: joi.object({
-        title: joi.string().label('Please input a valid post title'),
-        body: joi.string().min(3).label('Please input a valid post description'),
-        privacyId: joi.number().integer().positive().label('Please input a valid privacy value')
-      }).label('Please add a post details for this movie')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate comment payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateComment(payload) {
-    const schema = {
-      postId: joi.number().positive().label('Please input a valid post id'),
-      comment: joi.string().required().label('Please input a valid comment for the post'),
-      parentId: joi.number().positive().label('Please input a valid comment parent id'),
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate tickets payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateMovieTickets(payload) {
-    const schema = {
-      movieId: joi.number().positive().label('Please input a valid movie id'),
-      quantity: joi.number().required().label('Please input a valid quantity of tickets')
-    };
-    const { error } = joi.validate({ ...payload }, schema);
-    if (error) throw error.details[0].context.label;
-    return true;
-  },
-
-  /**
-   * validate tickets payload
-   * @param {object} payload - user object
-   * @returns {object | boolean} - returns a boolean or an error object
-   * @memberof GeneralValidation
-   */
-  validateEventTickets(payload) {
-    const schema = {
-      eventId: joi.number().positive().label('Please input a valid event id'),
-      quantity: joi.number().required().label('Please input a valid quantity of tickets')
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
