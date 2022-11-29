@@ -9,12 +9,14 @@ const {
   lecturerBouncers
 } = Bouncers;
 const {
-  verifySchedule
+  verifyAvialability,
+  verifyAvialabilityPayload
 } = ScheduleMiddleware;
 const {
   setAvialableTimePerDay
 } = ScheduleController;
 
-router.post('/', lecturerBouncers, verifySchedule, setAvialableTimePerDay);
+router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay);
+router.get('/', verifyAvialabilityPayload, setAvialableTimePerDay);
 
 export default router;

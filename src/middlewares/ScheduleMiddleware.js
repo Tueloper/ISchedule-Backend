@@ -29,7 +29,7 @@ const ScheduleMiddleware = {
    * @returns {object} - returns error or response object
    * @memberof ScheduleMiddleware
    */
-  async verifySchedulePayload(req, res, next) {
+  async verifyAvialability(req, res, next) {
     try {
       validateSchedule(req.body);
       const { availableDate } = req.body;
@@ -45,7 +45,7 @@ const ScheduleMiddleware = {
   },
 
   /**
-   * middleware validating event payload
+   * middleware validating
    * @async
    * @param {object} req - the api request
    * @param {object} res - api response returned by method
@@ -53,15 +53,17 @@ const ScheduleMiddleware = {
    * @returns {object} - returns error or response object
    * @memberof ScheduleMiddleware
    */
-  async verifySchedule(req, res, next) {
+  async verifyAvialabilityPayload(req, res, next) {
     try {
-      if (req.query.id || req.query.eventId) {
-        const id = req.query.id || req.query.eventId;
+      let availableTime;
+      if (req.query.id || req.query.avialabilityId) {
+        const id = req.query.id || req.query.avialabilityId;
         validateId({ id });
-        const event = await findByKey(Event, { id });
-        if (!event) return errorResponse(res, { code: 404, message: 'Event is Not Found' });
-        req.event = event;
+        availableTime = await findByKey(Schedule, { id });
+        if (!availableTime) return errorResponse(res, { code: 404, message: 'Date is Not Found' });
       }
+
+      req.availableTime = availableTime;
       if (req.body) validateParameters(req.body);
       next();
     } catch (error) {
