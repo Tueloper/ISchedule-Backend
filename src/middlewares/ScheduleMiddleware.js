@@ -45,6 +45,34 @@ const ScheduleMiddleware = {
   },
 
   /**
+   * middleware validating schedule payload
+   * @async
+   * @param {object} req - the api request
+   * @param {object} res - api response returned by method
+   * @param {object} next - returned values going into next function
+   * @returns {object} - returns error or response object
+   * @memberof ScheduleMiddleware
+   */
+  async verifySchedule(req, res, next) {
+    try {
+      validateParameters(req.body);
+      let availableTime;
+
+      if (req.query.id || req.query.avialabilityId) {
+        const id = req.query.id || req.query.avialabilityId;
+        validateId({ id });
+        availableTime = await findByKey(Schedule, { id });
+        if (!availableTime) return errorResponse(res, { code: 404, message: 'Date is Not Found' });
+      }
+
+      req.availableTime = availableTime;
+      next();
+    } catch (error) {
+      errorResponse(res, { code: 400, message: error });
+    }
+  },
+
+  /**
    * middleware validating
    * @async
    * @param {object} req - the api request

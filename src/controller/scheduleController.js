@@ -14,9 +14,10 @@ const {
 } = ScheduleService;
 const {
   addEntity,
-  // updateByKey,
-  // findByKey,
-  // findMultipleByKey
+  updateByKey,
+  findByKey,
+  findMultipleByKey,
+  deleteByKey
 } = GeneralService;
 const {
   Schedule,
@@ -66,6 +67,43 @@ const ScheduleController = {
       }
 
       return successResponse(res, { message: 'Category Gotten Successfully', availableDates });
+    } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * delete a schedule and a post
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof EventController
+   */
+  async deleteAvialableDate(req, res) {
+    try {
+      const { availableTime } = req;
+      const { id } = availableTime;
+
+      await deleteByKey(Schedule, { id });
+      return successResponse(res, { message: 'Schedule Deleted Successfully' });
+    } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * update a date
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof EventController
+   */
+  async updateAvialableDate(req, res) {
+    try {
+      const availableDate = await updateByKey(Schedule, { ...req.body }, { id: req.availableTime.id });
+      return successResponse(res, { message: 'Schedule updated Successfully', availableDate });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }

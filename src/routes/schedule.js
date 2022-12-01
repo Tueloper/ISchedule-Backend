@@ -10,13 +10,19 @@ const {
 } = Bouncers;
 const {
   verifyAvialability,
-  verifyAvialabilityPayload
+  verifyAvialabilityPayload,
+  verifySchedule
 } = ScheduleMiddleware;
 const {
-  setAvialableTimePerDay
+  setAvialableTimePerDay,
+  updateAvialableDate,
+  getAvailableDate,
+  deleteAvialableDate
 } = ScheduleController;
 
 router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay);
-router.get('/', verifyAvialabilityPayload, setAvialableTimePerDay);
+router.get('/', lecturerBouncers, verifyAvialabilityPayload, getAvailableDate);
+router.put('/', lecturerBouncers, verifySchedule, updateAvialableDate);
+router.delete('/', lecturerBouncers, verifySchedule, deleteAvialableDate);
 
 export default router;
