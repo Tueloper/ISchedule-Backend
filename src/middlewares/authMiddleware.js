@@ -84,13 +84,18 @@ const AuthMiddleware = {
   async authenticate(req, res, next) {
     try {
       // retrieve token from the request headers
-      const token = checkToken(req);
+      // const token = checkToken(req);
+      const { email } = req.body;
 
       // if token does not exist, send error message
-      if (!token) return errorResponse(res, { code: 401, message: 'Access denied, Token required' });
+      if (!email) return errorResponse(res, { code: 401, message: 'Access denied, Token required' });
 
-      // else send the tokendata to the controller
-      req.tokenData = verifyToken(token);
+      const user = await findByKey(User, { email });
+
+      // if the user does not exist send an error message
+      if (!user) return errorResponse(res, { code: 404, message: 'User does not exist' });
+
+      req.tokenData = user;
       next();
     } catch (error) {
       if (error.message === 'Invalid Token') {
@@ -109,16 +114,16 @@ const AuthMiddleware = {
     return async function bar(req, res, next) {
       try {
         // get id from authenticated token data
-        const { id } = req.tokenData;
+        const { type } = req.tokenData;
 
         // find user by id
-        const user = await findByKey(User, { id });
+        // const user = await findByKey(User, { id });
 
         // if user user doesnt exist send back an error message
-        if (!user) return errorResponse(res, { code: 404, message: 'user in token does not exist' });
+        // if (!user) return errorResponse(res, { code: 404, message: 'user in token does not exist' });
 
         // check also if user has the right access to access the api in requiest
-        const permitted = permissions.includes(user.type);
+        const permitted = permissions.includes(type);
 
         // if not permitted, send user an error message
         if (!permitted) return errorResponse(res, { code: 403, message: 'Halt! You\'re not authorised' });

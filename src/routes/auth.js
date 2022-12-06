@@ -19,7 +19,7 @@ const {
 // define apis
 router.post('/signup', verifySignup, signup);
 router.post('/login', verifyLogin, login);
-router.get('/profile', authenticate, getProfile);
+router.get('/profile', authenticate, getProfile); // ?email=[]
 router.post('/logout', authenticate, logoutUser);
 
 export default router;
