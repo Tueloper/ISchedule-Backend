@@ -20,9 +20,9 @@ const {
   deleteAvialableDate
 } = ScheduleController;
 
-router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay);
-router.get('/', lecturerBouncers, verifyAvialabilityPayload, getAvailableDate);
-router.put('/', lecturerBouncers, verifySchedule, updateAvialableDate);
-router.delete('/', lecturerBouncers, verifySchedule, deleteAvialableDate);
+router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay); // ?email=[]
+router.get('/', lecturerBouncers, verifyAvialabilityPayload, getAvailableDate); // ?email=[]
+router.put('/', lecturerBouncers, verifySchedule, updateAvialableDate); // ?email=[]
+router.delete('/', lecturerBouncers, verifySchedule, deleteAvialableDate); // ?email=[]
 
 export default router;

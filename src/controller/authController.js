@@ -48,16 +48,16 @@ const AuthController = {
       const user = await addEntity(User, { ...body });
 
       // create user token from add user details to be sent back to the frontend
-      user.token = createToken({
-        email: user.email,
-        id: user.id,
-        type: user.type,
-        username: user.username,
-        phoneNumber: user.phoneNumber,
-      });
+      // user.token = createToken({
+      //   email: user.email,
+      //   id: user.id,
+      //   type: user.type,
+      //   username: user.username,
+      //   phoneNumber: user.phoneNumber,
+      // });
 
       // send token
-      res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
+      // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       return successResponse(res, { ...user }, 201);
     } catch (error) {
       errorResponse(res, {});
@@ -80,17 +80,17 @@ const AuthController = {
       if (!comparePassword(password, user.password)) return errorResponse(res, { code: 401, message: 'incorrect password or email' });
 
       // if user passwoerd is correct, send user tokent to frontend
-      user.token = createToken({
-        email: user.email,
-        id: user.id,
-        type: user.type,
-        username: user.username,
-        phoneNumber: user.phoneNumber,
-      });
+      // user.token = createToken({
+      //   email: user.email,
+      //   id: user.id,
+      //   type: user.type,
+      //   username: user.username,
+      //   phoneNumber: user.phoneNumber,
+      // });
       res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       return successResponse(res, {
         message: 'Login Successful',
-        token: user.token
+        user
       });
     } catch (error) {
       errorResponse(res, {});
