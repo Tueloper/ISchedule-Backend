@@ -1,33 +1,29 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Notifications', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('StudentBookings', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    type: {
+    startTime: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true
     },
-    message: {
-      type: Sequelize.TEXT,
-      allowNull: false
-    },
-    subject: {
+    endTime: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: true
     },
-    read: {
+    booked: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
     },
-    userId: {
+    scheduleId: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: 'Users',
+        model: 'Schedules',
         key: 'id'
       },
       onUpdate: 'CASCADE',
@@ -42,5 +38,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: (queryInterface) => queryInterface.dropTable('Notifications')
+  down: (queryInterface) => queryInterface.dropTable('StudentBookings')
 };
