@@ -87,7 +87,8 @@ const AuthController = {
       //   username: user.username,
       //   phoneNumber: user.phoneNumber,
       // });
-      res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
+      // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
+      // console.log(user);
       return successResponse(res, {
         message: 'Login Successful',
         user

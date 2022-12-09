@@ -45,15 +45,15 @@ module.exports = (sequelize, DataTypes) => {
   Schedule.associate = (models) => {
     Schedule.belongsTo(models.User, {
       as: 'student',
-      foreignKey: 'userId'
+      foreignKey: 'lectuererId'
     });
     Schedule.belongsTo(models.User, {
       as: 'lecturer',
-      foreignKey: 'userId'
+      foreignKey: 'studentId'
     });
-    Schedule.hasMany(models.User, {
+    Schedule.hasMany(models.StudentBooking, {
       as: 'schedules',
-      foreignKey: 'scheduleId'
+      foreignKey: 'userId'
     });
   };
   return Schedule;
