@@ -76,6 +76,34 @@ const NotificationService = {
       throw new Error(error);
     }
   },
+
+  /**
+   * get target indicators
+   * @async
+   * @param {object} key - object containing category key and value
+   * @returns {promise-Object} - A promise object with entity details
+   * @memberof ManagerService
+   */
+  async getNotifications(key) {
+    try {
+      const entities = await Notification.findAll({
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name'],
+          }
+        ],
+        where: key,
+        order: [
+          ['updatedAt', 'DESC'],
+        ]
+      });
+      return entities;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
 };
 
 export default NotificationService;
