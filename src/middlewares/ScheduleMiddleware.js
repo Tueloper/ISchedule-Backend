@@ -16,7 +16,8 @@ const {
   findMultipleByKey
 } = GeneralService;
 const {
-  Schedule
+  Schedule,
+  StudentBooking,
 } = database;
 
 const ScheduleMiddleware = {
@@ -92,6 +93,40 @@ const ScheduleMiddleware = {
       }
 
       req.availableTime = availableTime;
+      if (req.body) validateParameters(req.body);
+      next();
+    } catch (error) {
+      errorResponse(res, { code: 400, message: error });
+    }
+  },
+
+  /**
+   * middleware validating
+   * @async
+   * @param {object} req - the api request
+   * @param {object} res - api response returned by method
+   * @param {object} next - returned values going into next function
+   * @returns {object} - returns error or response object
+   * @memberof ScheduleMiddleware
+   */
+  async verifyStudentSchedule(req, res, next) {
+    try {
+      if (req.query.scheduleId) {
+        const id = req.query.scheduleId;
+        validateId({ id });
+        const lecturerScheduleTime = await findByKey(Schedule, { id });
+        if (!lecturerScheduleTime) return errorResponse(res, { code: 404, message: 'Schedule does not exist' });
+        req.lecturerScheduleTime = lecturerScheduleTime;
+      }
+
+      if (req.query.bookingId) {
+        const id = req.query.bookingId;
+        validateId({ id });
+        const studentBookingData = await findByKey(StudentBooking, { id });
+        if (!studentBookingData) return errorResponse(res, { code: 404, message: 'booking does not exist' });
+        req.studentBookingData = studentBookingData;
+      }
+
       if (req.body) validateParameters(req.body);
       next();
     } catch (error) {

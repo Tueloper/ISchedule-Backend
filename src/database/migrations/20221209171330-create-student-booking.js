@@ -6,6 +6,10 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
+    subject: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     startTime: {
       type: Sequelize.STRING,
       allowNull: true

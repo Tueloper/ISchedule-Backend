@@ -11,18 +11,25 @@ const {
 const {
   verifyAvialability,
   verifyAvialabilityPayload,
-  verifySchedule
+  verifySchedule,
+  verifyStudentSchedule
 } = ScheduleMiddleware;
 const {
   setAvialableTimePerDay,
   updateAvialableDate,
   getAvailableDate,
-  deleteAvialableDate
+  deleteAvialableDate,
+  bookSchedule,
+  updatedBookingSchedule,
+  deleteBookingSchedule,
 } = ScheduleController;
 
 router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay); // ?email=[]
 router.get('/', lecturerBouncers, verifyAvialabilityPayload, getAvailableDate); // ?email=[]
 router.put('/', lecturerBouncers, verifySchedule, updateAvialableDate); // ?email=[]
 router.delete('/', lecturerBouncers, verifySchedule, deleteAvialableDate); // ?email=[]
+router.post('/', studentBouncers, verifyStudentSchedule, bookSchedule); // ?email=[]?scheduleId=[]
+router.put('/', studentBouncers, verifyStudentSchedule, updatedBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]
+router.delete('/', studentBouncers, verifyStudentSchedule, deleteBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]
 
 export default router;
