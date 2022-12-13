@@ -22,6 +22,7 @@ const {
   bookSchedule,
   updatedBookingSchedule,
   deleteBookingSchedule,
+  getBookingSchedule,
 } = ScheduleController;
 
 router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay); // ?email=[]
@@ -31,5 +32,6 @@ router.delete('/', lecturerBouncers, verifySchedule, deleteAvialableDate); // ?e
 router.post('/', studentBouncers, verifyStudentSchedule, bookSchedule); // ?email=[]?scheduleId=[]
 router.put('/', studentBouncers, verifyStudentSchedule, updatedBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]
 router.delete('/', studentBouncers, verifyStudentSchedule, deleteBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]
+router.get('/', studentBouncers, verifyStudentSchedule, getBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]&startDate=[]&endDate=[]
 
 export default router;

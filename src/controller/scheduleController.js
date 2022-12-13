@@ -10,13 +10,12 @@ const {
   // generateTicketCode
 } = Toolbox;
 const {
-  getAvailableDates
+  getAvailableDates,
+  getBookings
 } = ScheduleService;
 const {
   addEntity,
   updateByKey,
-  findByKey,
-  findMultipleByKey,
   deleteByKey
 } = GeneralService;
 const {
@@ -67,7 +66,7 @@ const ScheduleController = {
         availableDates = await getAvailableDates({ booked });
       }
 
-      return successResponse(res, { message: 'Category Gotten Successfully', availableDates });
+      return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }
@@ -158,6 +157,35 @@ const ScheduleController = {
     try {
       const booking = await deleteByKey(StudentBooking, { id: req.studentBookingData.id });
       return successResponse(res, { message: 'Booking deleted Successfully', booking });
+    } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all schedule
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getBookingSchedule(req, res) {
+    try {
+      const {
+        scheduleId, bookingId, startDate, endDate
+      } = req.query;
+      let bookings;
+
+      if (scheduleId) {
+        bookings = await getBookings({ id: scheduleId });
+      } else if (startDate && endDate) {
+        bookings = await getBookings({ startDate, endDate });
+      } else if (bookingId) {
+        bookings = await getBookings({ bookingId });
+      }
+
+      return successResponse(res, { message: 'Bookings Gotten Successfully', bookings });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }
