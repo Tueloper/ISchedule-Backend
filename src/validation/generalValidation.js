@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-escape */
 import joi from '@hapi/joi';
-import validationData from './validationData';
 
 // const { states, countries } = validationData;
 
@@ -13,17 +12,13 @@ const GeneralValidation = {
    */
   validateParameters(payload) {
     const schema = {
-      // type: joi.string().label('Please input a valid privacy type'),
-      // activityType: joi.string().valid('general', 'post', 'event', 'movie', 'following').label('Please input a valid privacy type'),
       description: joi.string().label('Please input a valid privacy description'),
       id: joi.number().positive().label('Please enter a positive number for id parameter'),
       email: joi.string().email().label('Please enter a valid email address'),
       title: joi.string().label('Please input a valid post title'),
       body: joi.string().label('Please input a valid post message'),
-      subject: joi.string().min(1).max(50)
-        .label('Please enter a valid subject'),
-      message: joi.string().min(1).max(500)
-        .label('Please enter a valid message \n the field must not be empty and it must be more than 10 letters'),
+      subject: joi.string().min(1).max(50).label('Please enter a valid subject'),
+      message: joi.string().min(1).max(500).label('Please enter a valid message \n the field must not be empty and it must be more than 10 letters'),
       avialableDate: joi.date().label('Please input a valid date when the You will be available'),
       startTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid start time'),
       endTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid end time'),

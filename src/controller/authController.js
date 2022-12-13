@@ -58,7 +58,9 @@ const AuthController = {
 
       // send token
       // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
-      return successResponse(res, { ...user }, 201);
+      return res.status(201).send(
+        user
+      );
     } catch (error) {
       errorResponse(res, {});
     }
@@ -89,10 +91,9 @@ const AuthController = {
       // });
       // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       // console.log(user);
-      return successResponse(res, {
-        message: 'Login Successful',
+      return res.status(200).send(
         user
-      });
+      );
     } catch (error) {
       errorResponse(res, {});
     }
@@ -111,7 +112,9 @@ const AuthController = {
 
       // retrieve user details by user id
       const user = await findByKey(User, { id });
-      successResponse(res, { user });
+      return res.status(200).send(
+        user
+      );
     } catch (error) {
       errorResponse(res, {});
     }

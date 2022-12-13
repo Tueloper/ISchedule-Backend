@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    subject: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     booked: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -24,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     },
   }, {});
-  StudentBooking.associate = function (models) {
+  StudentBooking.associate = (models) => {
     // associations can be defined here
     StudentBooking.belongsTo(models.Schedule, {
       as: 'booking',
