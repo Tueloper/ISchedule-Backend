@@ -34,4 +34,6 @@ router.put('/', studentBouncers, verifyStudentSchedule, updatedBookingSchedule);
 router.delete('/', studentBouncers, verifyStudentSchedule, deleteBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]
 router.get('/', studentBouncers, verifyStudentSchedule, getBookingSchedule); // ?email=[]?scheduleId=[]&bookingId=[]&startDate=[]&endDate=[]
 
+
+
 export default router;
