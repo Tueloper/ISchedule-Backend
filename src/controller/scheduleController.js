@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
+import moment from 'moment';
 import { GeneralService, ScheduleService } from '../services';
 import { Toolbox } from '../util';
 import database from '../models';
@@ -20,6 +21,7 @@ const {
 } = GeneralService;
 const {
   Schedule,
+  TeacherSchedule,
   StudentBooking,
 } = database;
 
@@ -38,6 +40,64 @@ const ScheduleController = {
       const { body } = req;
       const availableTime = await addEntity(Schedule, { ...body, lectuererId: id });
       return successResponse(res, { message: 'Available time set Successfully', availableTime });
+    } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * Select available time and date
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async addScheduleV2(req, res) {
+    try {
+      const { id } = req.tokenData;
+      const { body } = req;
+      const { avialableDate } = body;
+      const year = new Date(avialableDate).getFullYear();
+      const month = new Date(avialableDate).getMonth();
+      const day = new Date(avialableDate).getDay();
+
+      const schedule = await addEntity(TeacherSchedule, {
+        ...body, lectuererId: id, booked: true, year, month, day
+      });
+      return res.status(201).send(
+        schedule
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all available time per day
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getTeacherSchedule(req, res) {
+    try {
+      const {
+        startDate, endDate, booked, id
+      } = req.query;
+      let availableDates;
+
+      if (id) {
+        availableDates = await getAvailableDates({ id });
+      } else if (startDate && endDate) {
+        availableDates = await getAvailableDates({ startDate, endDate });
+      } else if (booked) {
+        availableDates = await getAvailableDates({ booked });
+      }
+
+      return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }

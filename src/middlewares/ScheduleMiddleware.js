@@ -18,6 +18,8 @@ const {
 const {
   Schedule,
   StudentBooking,
+  TeacherSchedule,
+  Booking,
 } = database;
 
 const ScheduleMiddleware = {
@@ -54,6 +56,31 @@ const ScheduleMiddleware = {
    * @returns {object} - returns error or response object
    * @memberof ScheduleMiddleware
    */
+  async verifyScheduleV2(req, res, next) {
+    try {
+      validateSchedule(req.body);
+      const { avialableDate } = req.body;
+      const availableTime = await findMultipleByKey(TeacherSchedule, { avialableDate });
+      if (availableTime.length) {
+        return errorResponse(res, { code: 404, message: 'Date is in use' });
+      }
+
+      next();
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 400, message: error });
+    }
+  },
+
+  /**
+   * middleware validating schedule payload
+   * @async
+   * @param {object} req - the api request
+   * @param {object} res - api response returned by method
+   * @param {object} next - returned values going into next function
+   * @returns {object} - returns error or response object
+   * @memberof ScheduleMiddleware
+   */
   async verifySchedule(req, res, next) {
     try {
       validateParameters(req.body);
@@ -67,6 +94,33 @@ const ScheduleMiddleware = {
       }
 
       req.availableTime = availableTime;
+      next();
+    } catch (error) {
+      errorResponse(res, { code: 400, message: error });
+    }
+  },
+
+  /**
+   * middleware validating
+   * @async
+   * @param {object} req - the api request
+   * @param {object} res - api response returned by method
+   * @param {object} next - returned values going into next function
+   * @returns {object} - returns error or response object
+   * @memberof ScheduleMiddleware
+   */
+  async verifySchedulePayload(req, res, next) {
+    try {
+      let availableTime;
+      if (req.query.id) {
+        const { id } = req.query;
+        validateId({ id });
+        availableTime = await findByKey(TeacherSchedule, { id });
+        if (!availableTime) return errorResponse(res, { code: 404, message: 'Date is Not Found' });
+      }
+
+      req.availableTime = availableTime;
+      if (req.body) validateParameters(req.body);
       next();
     } catch (error) {
       errorResponse(res, { code: 400, message: error });
