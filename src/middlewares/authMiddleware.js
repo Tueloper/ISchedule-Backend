@@ -85,7 +85,7 @@ const AuthMiddleware = {
     try {
       // retrieve token from the request headers
       // const token = checkToken(req);
-      const { email } = req.body;
+      const { email } = req.query;
 
       // if token does not exist, send error message
       if (!email) return errorResponse(res, { code: 401, message: 'Access denied, Token required' });

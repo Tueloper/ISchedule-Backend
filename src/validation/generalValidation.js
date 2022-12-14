@@ -20,9 +20,9 @@ const GeneralValidation = {
       subject: joi.string().min(1).max(50).label('Please enter a valid subject'),
       message: joi.string().min(1).max(500).label('Please enter a valid message \n the field must not be empty and it must be more than 10 letters'),
       avialableDate: joi.date().label('Please input a valid date when the You will be available'),
-      startTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid start time'),
-      endTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid end time'),
-      booked: joi.bool().required().label('Please indicated whether you want to book or not'),
+      startTime: joi.string().label('Please enter a valid start time'),
+      endTime: joi.string().label('Please enter a valid end time'),
+      booked: joi.bool().label('Please indicated whether you want to book or not'),
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
@@ -53,10 +53,32 @@ const GeneralValidation = {
    */
   validateSchedule(payload) {
     const schema = {
+      subject: joi.string().min(1).max(50).label('Please enter a valid subject'),
+      color: joi.string().min(1).max(50).label('Please enter a valid subject'),
       avialableDate: joi.date().label('Please input a valid date when the You will be available'),
-      startTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid start time'),
-      endTime: joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/).label('Please enter a valid end time'),
-      booked: joi.bool().required().label('Please indicated whether you want to book or not'),
+      startTime: joi.string().label('Please enter a valid start time'),
+      endTime: joi.string().label('Please enter a valid end time'),
+      // booked: joi.bool().label('Please indicated whether you want to book or not'),
+    };
+    const { error } = joi.validate({ ...payload }, schema);
+    if (error) throw error.details[0].context.label;
+    return true;
+  },
+
+  /**
+   * validate schedule payload
+   * @param {object} payload - user object
+   * @returns {object | boolean} - returns a boolean or an error object
+   * @memberof GeneralValidation
+   */
+  validateStudentSchedule(payload) {
+    const schema = {
+      subject: joi.string().min(1).max(50).label('Please enter a valid subject'),
+      color: joi.string().min(1).max(50).label('Please enter a valid subject'),
+      scheduleId: joi.number().positive().label('Please enter a positive number for id parameter'),
+      startTime: joi.string().label('Please enter a valid start time'),
+      endTime: joi.string().label('Please enter a valid end time'),
+      // booked: joi.bool().label('Please indicated whether you want to book or not'),
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;

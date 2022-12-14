@@ -11,16 +11,22 @@ const {
 } = Toolbox;
 const {
   getAvailableDates,
-  getBookings
+  getBookings,
+  getTeacherSchedules,
+  getStduentsBookings
 } = ScheduleService;
 const {
   addEntity,
   updateByKey,
-  deleteByKey
+  deleteByKey,
+  findMultipleByKey
 } = GeneralService;
 const {
+  User,
   Schedule,
+  TeacherSchedule,
   StudentBooking,
+  Booking
 } = database;
 
 const ScheduleController = {
@@ -38,6 +44,93 @@ const ScheduleController = {
       const { body } = req;
       const availableTime = await addEntity(Schedule, { ...body, lectuererId: id });
       return successResponse(res, { message: 'Available time set Successfully', availableTime });
+    } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * Select available time and date
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async addScheduleV2(req, res) {
+    try {
+      const { id } = req.tokenData;
+      const { body } = req;
+      const { avialableDate } = body;
+      const year = new Date(avialableDate).getFullYear();
+      const month = new Date(avialableDate).getMonth();
+      const day = new Date(avialableDate).getDay();
+
+      const schedule = await addEntity(TeacherSchedule, {
+        ...body, lectuererId: id, booked: true, year, month, day
+      });
+      return res.status(201).send(
+        schedule
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * Select available time and date
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async addBookingV2(req, res) {
+    try {
+      const { id } = req.tokenData;
+      const { body } = req;
+      const {
+        year, month, day, avialableDate
+      } = req.teacherSchedule;
+      const booking = await addEntity(Booking, {
+        ...body, studentId: id, year, month, day, avialableDate
+      });
+      return res.status(201).send(
+        booking
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all available time per day
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getTeacherSchedule(req, res) {
+    try {
+      const {
+        startDate, endDate, booked, id
+      } = req.query;
+      let schedules;
+
+      if (id) {
+        schedules = await getTeacherSchedules({ id });
+      } else if (startDate && endDate) {
+        schedules = await getTeacherSchedules({ startDate, endDate });
+      } else if (booked) {
+        schedules = await getTeacherSchedules({ booked });
+      }
+      return res.status(200).send(
+        schedules
+      );
+      // return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }
@@ -161,6 +254,23 @@ const ScheduleController = {
       errorResponse(res, { code: 500, message: error });
     }
   },
+  /**
+   * get user profile
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} - A jsom response with user details
+   * @memberof UserController
+   */
+  async getTeachers(req, res) {
+    try {
+      const user = await findMultipleByKey(User, { type: 'lecturer' || 'teacher' });
+      return res.status(200).send(
+        user
+      );
+    } catch (error) {
+      errorResponse(res, {});
+    }
+  },
 
   /**
    * get all schedule
@@ -187,6 +297,64 @@ const ScheduleController = {
 
       return successResponse(res, { message: 'Bookings Gotten Successfully', bookings });
     } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all schedule
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getTeacherBookings(req, res) {
+    try {
+      const {
+        scheduleId
+      } = req.query;
+      let sudentBookings;
+
+      if (scheduleId) {
+        sudentBookings = await getBookings({ id: scheduleId });
+      }
+
+      return res.status(200).send(
+        sudentBookings || []
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all schedule
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getBookings(req, res) {
+    try {
+      const {
+        bookingId, startDate, endDate
+      } = req.query;
+      let sudentBookings;
+
+      if (bookingId) {
+        sudentBookings = await getStduentsBookings({ id: bookingId });
+      } else if (startDate && endDate) {
+        sudentBookings = await getStduentsBookings({ startDate, endDate });
+      }
+
+      return res.status(200).send(
+        sudentBookings
+      );
+    } catch (error) {
+      console.error(error);
       errorResponse(res, { code: 500, message: error });
     }
   },
