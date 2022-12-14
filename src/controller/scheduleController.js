@@ -12,7 +12,8 @@ const {
 } = Toolbox;
 const {
   getAvailableDates,
-  getBookings
+  getBookings,
+  getTeacherSchedules
 } = ScheduleService;
 const {
   addEntity,
@@ -90,11 +91,11 @@ const ScheduleController = {
       let availableDates;
 
       if (id) {
-        availableDates = await getAvailableDates({ id });
+        availableDates = await getTeacherSchedules({ id });
       } else if (startDate && endDate) {
-        availableDates = await getAvailableDates({ startDate, endDate });
+        availableDates = await getTeacherSchedules({ startDate, endDate });
       } else if (booked) {
-        availableDates = await getAvailableDates({ booked });
+        availableDates = await getTeacherSchedules({ booked });
       }
 
       return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });

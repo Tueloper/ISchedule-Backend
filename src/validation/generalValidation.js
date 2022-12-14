@@ -22,7 +22,7 @@ const GeneralValidation = {
       avialableDate: joi.date().label('Please input a valid date when the You will be available'),
       startTime: joi.string().label('Please enter a valid start time'),
       endTime: joi.string().label('Please enter a valid end time'),
-      booked: joi.bool().required().label('Please indicated whether you want to book or not'),
+      booked: joi.bool().label('Please indicated whether you want to book or not'),
     };
     const { error } = joi.validate({ ...payload }, schema);
     if (error) throw error.details[0].context.label;
