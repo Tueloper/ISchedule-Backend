@@ -18,9 +18,11 @@ const {
 const {
   addEntity,
   updateByKey,
-  deleteByKey
+  deleteByKey,
+  findMultipleByKey
 } = GeneralService;
 const {
+  User,
   Schedule,
   TeacherSchedule,
   StudentBooking,
@@ -88,17 +90,19 @@ const ScheduleController = {
       const {
         startDate, endDate, booked, id
       } = req.query;
-      let availableDates;
+      let schedules;
 
       if (id) {
-        availableDates = await getTeacherSchedules({ id });
+        schedules = await getTeacherSchedules({ id });
       } else if (startDate && endDate) {
-        availableDates = await getTeacherSchedules({ startDate, endDate });
+        schedules = await getTeacherSchedules({ startDate, endDate });
       } else if (booked) {
-        availableDates = await getTeacherSchedules({ booked });
+        schedules = await getTeacherSchedules({ booked });
       }
-
-      return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });
+      return res.status(200).send(
+        schedules
+      );
+      // return successResponse(res, { message: 'Schedules Gotten Successfully', availableDates });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
     }
@@ -220,6 +224,23 @@ const ScheduleController = {
       return successResponse(res, { message: 'Booking deleted Successfully', booking });
     } catch (error) {
       errorResponse(res, { code: 500, message: error });
+    }
+  },
+  /**
+   * get user profile
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} - A jsom response with user details
+   * @memberof UserController
+   */
+  async getTeachers(req, res) {
+    try {
+      const user = await findMultipleByKey(User, { type: 'lecturer' || 'teacher' });
+      return res.status(200).send(
+        user
+      );
+    } catch (error) {
+      errorResponse(res, {});
     }
   },
 
