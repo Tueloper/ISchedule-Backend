@@ -1,3 +1,4 @@
+import e from 'express';
 import { GeneralValidation } from '../validation';
 import { Toolbox } from '../util';
 import { GeneralService } from '../services';
@@ -9,7 +10,8 @@ const {
 const {
   validateId,
   validateParameters,
-  validateSchedule
+  validateSchedule,
+  validateStudentSchedule
 } = GeneralValidation;
 const {
   findByKey,
@@ -65,6 +67,36 @@ const ScheduleMiddleware = {
         return errorResponse(res, { code: 404, message: 'Date is in use' });
       }
 
+      next();
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 400, message: error });
+    }
+  },
+
+  /**
+   * middleware validating schedule payload
+   * @async
+   * @param {object} req - the api request
+   * @param {object} res - api response returned by method
+   * @param {object} next - returned values going into next function
+   * @returns {object} - returns error or response object
+   * @memberof ScheduleMiddleware
+   */
+  async verifyBookingV2(req, res, next) {
+    try {
+      validateStudentSchedule(req.body);
+      const { scheduleId } = req.body;
+      const teacherSchedule = await findByKey(TeacherSchedule, { id: scheduleId });
+      if (!teacherSchedule) {
+        return errorResponse(res, { code: 404, message: 'Teacher Schedule not found' });
+      }
+
+      if (teacherSchedule.booked === false) {
+        return errorResponse(res, { code: 403, message: 'Booked' });
+      }
+
+      req.teacherSchedule = teacherSchedule;
       next();
     } catch (error) {
       console.error(error);

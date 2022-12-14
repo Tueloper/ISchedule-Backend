@@ -26,6 +26,7 @@ const {
   Schedule,
   TeacherSchedule,
   StudentBooking,
+  Booking
 } = database;
 
 const ScheduleController = {
@@ -70,6 +71,31 @@ const ScheduleController = {
       });
       return res.status(201).send(
         schedule
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * Select available time and date
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async addBookingV2(req, res) {
+    try {
+      const { id } = req.tokenData;
+      const { body } = req;
+      const { year, month, day } = req.teacherSchedule;
+      const booking = await addEntity(Booking, {
+        ...body, studentId: id, year, month, day
+      });
+      return res.status(201).send(
+        booking
       );
     } catch (error) {
       console.error(error);
