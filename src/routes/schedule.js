@@ -31,7 +31,8 @@ const {
   getTeacherSchedule,
   getTeachers,
   addBookingV2,
-  getStudentBookings
+  getTeacherBookings,
+  getBookings
 } = ScheduleController;
 
 router.post('/', lecturerBouncers, verifyAvialability, setAvialableTimePerDay); // ?email=[]
@@ -48,6 +49,7 @@ router.post('/v2', lecturerBouncers, verifyScheduleV2, addScheduleV2); // ?email
 router.get('/v2', verifySchedulePayload, getTeacherSchedule); // ?email=[]&startDate=2022/12/13&endDate=2022/12/15
 router.get('/teachers', getTeachers); // ?email=[]&startDate=2022/12/13&endDate=2022/12/15
 router.post('/student/v2', studentBouncers, verifyBookingV2, addBookingV2); // ?email=[]
-// router.get('/student/v2', verifyBookingPayload, getStudentBookings); // ?email=[]
+router.get('/student/v2', verifyBookingPayload, getTeacherBookings); // ?email=[]
+router.get('/students/v2', verifyBookingPayload, getBookings); // ?email=[]
 
 export default router;

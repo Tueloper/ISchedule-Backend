@@ -55,14 +55,10 @@ module.exports = (sequelize, DataTypes) => {
       as: 'lecturer',
       foreignKey: 'lectuererId'
     });
-    // TeacherSchedule.belongsTo(models.User, {
-    //   as: 'lecturer',
-    //   foreignKey: 'studentId'
-    // });
-    // TeacherSchedule.hasMany(models.StudentBooking, {
-    //   as: 'schedules',
-    //   foreignKey: 'userId'
-    // });
+    TeacherSchedule.hasMany(models.Booking, {
+      as: 'bookings',
+      foreignKey: 'scheduleId'
+    });
   };
   return TeacherSchedule;
 };

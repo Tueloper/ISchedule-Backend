@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
-import moment from 'moment';
 import { GeneralService, ScheduleService } from '../services';
 import { Toolbox } from '../util';
 import database from '../models';
@@ -13,7 +12,8 @@ const {
 const {
   getAvailableDates,
   getBookings,
-  getTeacherSchedules
+  getTeacherSchedules,
+  getStduentsBookings
 } = ScheduleService;
 const {
   addEntity,
@@ -90,9 +90,11 @@ const ScheduleController = {
     try {
       const { id } = req.tokenData;
       const { body } = req;
-      const { year, month, day } = req.teacherSchedule;
+      const {
+        year, month, day, avialableDate
+      } = req.teacherSchedule;
       const booking = await addEntity(Booking, {
-        ...body, studentId: id, year, month, day
+        ...body, studentId: id, year, month, day, avialableDate
       });
       return res.status(201).send(
         booking
@@ -295,6 +297,64 @@ const ScheduleController = {
 
       return successResponse(res, { message: 'Bookings Gotten Successfully', bookings });
     } catch (error) {
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all schedule
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getTeacherBookings(req, res) {
+    try {
+      const {
+        scheduleId
+      } = req.query;
+      let sudentBookings;
+
+      if (scheduleId) {
+        sudentBookings = await getBookings({ id: scheduleId });
+      }
+
+      return res.status(200).send(
+        sudentBookings || []
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, { code: 500, message: error });
+    }
+  },
+
+  /**
+   * get all schedule
+   * @async
+   * @param {object} req
+   * @param {object} res
+   * @returns {JSON} a JSON response with user details and Token
+   * @memberof ScheduleController
+   */
+  async getBookings(req, res) {
+    try {
+      const {
+        bookingId, startDate, endDate
+      } = req.query;
+      let sudentBookings;
+
+      if (bookingId) {
+        sudentBookings = await getStduentsBookings({ id: bookingId });
+      } else if (startDate && endDate) {
+        sudentBookings = await getStduentsBookings({ startDate, endDate });
+      }
+
+      return res.status(200).send(
+        sudentBookings
+      );
+    } catch (error) {
+      console.error(error);
       errorResponse(res, { code: 500, message: error });
     }
   },

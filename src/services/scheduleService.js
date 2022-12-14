@@ -5,7 +5,7 @@ const {
   // User,
   Schedule,
   TeacherSchedule,
-  StudentBooking
+  Booking,
 } = database;
 
 const ScheduleService = {
@@ -62,6 +62,32 @@ const ScheduleService = {
   },
 
   /**
+   * Get user available dates
+   * @async
+   * @param {object} key - inputs like names or tags
+   * @returns {promise-Object} - A promise object with entity details
+   * @memberof ScheduleService
+   */
+  async getStduentsBookings(key) {
+    try {
+      const entities = await Booking.findAll({
+        where: key.startDate ? {
+          avialableDate: {
+            [Op.between]: [key.startDate, key.endDate]
+          }
+        } : key,
+        order: [
+          ['avialableDate', 'DESC']
+        ],
+        returning: true
+      });
+      return entities;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  /**
    * Get bookings
    * @async
    * @param {object} key - inputs like names or tags
@@ -70,18 +96,15 @@ const ScheduleService = {
    */
   async getBookings(key) {
     try {
-      const entities = await Schedule.findAll({
+      const entities = await TeacherSchedule.findAll({
         include: [
           {
-            model: StudentBooking,
+            model: Booking,
             as: 'bookings',
           }
         ],
-        where: key.startDate ? {
-          avialableDate: {
-            [Op.between]: [key.startDate, key.endDate]
-          }
-        } : key,
+        // eslint-disable-next-line no-nested-ternary
+        where: key,
         order: [
           ['id', 'DESC']
         ],

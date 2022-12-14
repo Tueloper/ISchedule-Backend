@@ -22,6 +22,10 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true
     },
+    avialableDate: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     day: {
       type: Sequelize.STRING,
       allowNull: true

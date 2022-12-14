@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false
     },
+    avialableDate: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     studentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -59,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
     Booking.belongsTo(models.User, {
       as: 'student',
       foreignKey: 'studentId'
+    });
+    Booking.belongsTo(models.TeacherSchedule, {
+      as: 'booking',
+      foreignKey: 'scheduleId'
     });
   };
   return Booking;
