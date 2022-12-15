@@ -19,4 +19,6 @@
       SECRET=oiuhkyj908765gvhbjnkml87y
     ```
 - then run ``` npm run start:dev``` to start the local server
--  Incases you dont want to run the local server, you can use the link deploy on azure app services, https://ischedule-backend-server.azurewebsites.net/api/v1 to call the apis
+-  Incases you dont want to run the local server, you can use the link deploy on azure app services, https://ischeduleapp.herokuapp.com/api/v1 to call the apis
+
+- Last Notification system was installed on using NODEMAILER.
