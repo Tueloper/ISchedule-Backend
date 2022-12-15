@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-unused-vars */
 import { GeneralService } from '../services';
-import { Toolbox } from '../util';
+import { Toolbox, Mailer } from '../util';
 import database from '../models';
 
 const {
@@ -17,6 +17,10 @@ const {
   findByKey,
   // deleteByKey
 } = GeneralService;
+const {
+  sendWelcomeEmail,
+  sendNotificationEmail
+} = Mailer;
 const {
   User,
 } = database;
@@ -46,22 +50,14 @@ const AuthController = {
 
       // add the user using sequelize add command
       const user = await addEntity(User, { ...body });
-
-      // create user token from add user details to be sent back to the frontend
-      // user.token = createToken({
-      //   email: user.email,
-      //   id: user.id,
-      //   type: user.type,
-      //   username: user.username,
-      //   phoneNumber: user.phoneNumber,
-      // });
-
+      await sendWelcomeEmail(user);
       // send token
       // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
       return res.status(201).send(
         user
       );
     } catch (error) {
+      console.error(error);
       errorResponse(res, {});
     }
   },
@@ -81,16 +77,7 @@ const AuthController = {
       // compare passwords, to be sure the password matches, if not send an error message
       if (!comparePassword(password, user.password)) return errorResponse(res, { code: 401, message: 'incorrect password or email' });
 
-      // if user passwoerd is correct, send user tokent to frontend
-      // user.token = createToken({
-      //   email: user.email,
-      //   id: user.id,
-      //   type: user.type,
-      //   username: user.username,
-      //   phoneNumber: user.phoneNumber,
-      // });
-      // res.cookie('token', user.token, { maxAge: 70000000, httpOnly: true });
-      // console.log(user);
+      await sendWelcomeEmail(user);
       return res.status(200).send(
         user
       );

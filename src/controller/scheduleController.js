@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 import { GeneralService, ScheduleService } from '../services';
-import { Toolbox } from '../util';
+import { Toolbox, Mailer } from '../util';
 import database from '../models';
 
 const {
@@ -19,8 +19,13 @@ const {
   addEntity,
   updateByKey,
   deleteByKey,
-  findMultipleByKey
+  findMultipleByKey,
+  findByKey
 } = GeneralService;
+const {
+  sendAppointMail,
+  sendNotificationEmail
+} = Mailer;
 const {
   User,
   Schedule,
@@ -69,6 +74,7 @@ const ScheduleController = {
       const schedule = await addEntity(TeacherSchedule, {
         ...body, lectuererId: id, booked: true, year, month, day
       });
+      await sendAppointMail(req.tokenData, schedule);
       return res.status(201).send(
         schedule
       );
@@ -96,6 +102,8 @@ const ScheduleController = {
       const booking = await addEntity(Booking, {
         ...body, studentId: id, year, month, day, avialableDate
       });
+      const lectuerer = await findByKey(User, { id: req.teacherSchedule.lectuererId });
+      await sendNotificationEmail(req.tokenData, lectuerer, booking);
       return res.status(201).send(
         booking
       );
