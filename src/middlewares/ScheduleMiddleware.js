@@ -61,8 +61,10 @@ const ScheduleMiddleware = {
   async verifyScheduleV2(req, res, next) {
     try {
       validateSchedule(req.body);
+      // console.log(req.tokenData);
       const { avialableDate } = req.body;
-      const availableTime = await findMultipleByKey(TeacherSchedule, { avialableDate });
+      const availableTime = await findMultipleByKey(TeacherSchedule,
+        { avialableDate, lectuererId: req.tokenData.id });
       if (availableTime.length) {
         return errorResponse(res, { code: 404, message: 'Date is in use' });
       }
